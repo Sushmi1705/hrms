@@ -21,6 +21,7 @@ public static class DatabaseSeeder
         var logger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("DatabaseSeeder");
         var passwordHasher = scope.ServiceProvider.GetRequiredService<Microsoft.AspNetCore.Identity.IPasswordHasher<HRMS.Domain.Entities.Auth.User>>();
 
+        HRMS.Persistence.Interceptors.AuditSaveChangesInterceptor.DisableAuditing = true;
         try
         {
             logger.LogInformation("Checking database seed status...");
@@ -203,17 +204,19 @@ public static class DatabaseSeeder
             }
             await context.Employees.AddRangeAsync(employees);
             await context.SaveChangesAsync();
+            context.ChangeTracker.Clear();
             logger.LogInformation($"Seeded 200 Employees perfectly related to Organization Entities.");
 
-            // 8. Seed Attendance History (Last 180 Days)
-            var attendanceLogs = GenerateAttendanceLogs(employees, shifts, daysBack: 180);
-            // Batch insert for performance
-            int batchSize = 5000;
+            // 8. Seed Attendance History (Last 90 Days)
+            var attendanceLogs = GenerateAttendanceLogs(employees, shifts, daysBack: 90);
+            // Batch insert for performance and clear ChangeTracker to conserve memory on cloud
+            int batchSize = 2500;
             for (int i = 0; i < attendanceLogs.Count; i += batchSize)
             {
                 var batch = attendanceLogs.Skip(i).Take(batchSize).ToList();
                 await context.AttendanceLogs.AddRangeAsync(batch);
                 await context.SaveChangesAsync();
+                context.ChangeTracker.Clear();
                 logger.LogInformation($"Inserted {i + batch.Count} / {attendanceLogs.Count} Attendance Logs.");
             }
 
@@ -222,7 +225,8 @@ public static class DatabaseSeeder
             var approvals = GenerateApprovals(employees);
             await context.AttendanceApprovals.AddRangeAsync(approvals);
             await context.SaveChangesAsync();
-            logger.LogInformation("Seeded {approvals.Count} Attendance Approvals.");
+            context.ChangeTracker.Clear();
+            logger.LogInformation($"Seeded {approvals.Count} Attendance Approvals.");
             
             // 10. Seed Shift & Roster Module
             ShiftSeeder.Seed(context);
@@ -268,6 +272,10 @@ public static class DatabaseSeeder
         {
             logger.LogError(ex, "An error occurred while seeding the database.");
             throw;
+        }
+        finally
+        {
+            HRMS.Persistence.Interceptors.AuditSaveChangesInterceptor.DisableAuditing = false;
         }
     }
 

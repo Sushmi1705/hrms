@@ -7,8 +7,12 @@ namespace HRMS.Persistence.Interceptors;
 
 public class AuditSaveChangesInterceptor : SaveChangesInterceptor
 {
+    public static bool DisableAuditing { get; set; } = false;
+
     public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
     {
+        if (DisableAuditing) return base.SavingChanges(eventData, result);
+
         var dbContext = eventData.Context;
         if (dbContext == null) return base.SavingChanges(eventData, result);
 
