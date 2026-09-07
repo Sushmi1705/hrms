@@ -24,7 +24,6 @@ services:
   - type: web
     name: hrms-frontend
     runtime: static
-    plan: free
     buildCommand: cd hrms-frontend && npm install && npm run build
     staticPublishPath: ./hrms-frontend/dist
     routes:
