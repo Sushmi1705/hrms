@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\HRMS.Domain\HRMS.Domain.csproj" />
-    <ProjectReference Include="..\HRMS.Shared\HRMS.Shared.csproj" />
+    <ProjectReference Include="../HRMS.Domain/HRMS.Domain.csproj" />
+    <ProjectReference Include="../HRMS.Shared/HRMS.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -16,7 +16,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-  <NoWarn>$(NoWarn);CS8618</NoWarn>
-</PropertyGroup>
+    <NoWarn>$(NoWarn);CS8618</NoWarn>
+  </PropertyGroup>
 
 </Project>

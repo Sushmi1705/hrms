@@ -1,7 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\HRMS.Application\HRMS.Application.csproj" />
+    <ProjectReference Include="../HRMS.Application/HRMS.Application.csproj" />
   </ItemGroup>
 
   <ItemGroup>

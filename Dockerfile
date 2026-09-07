@@ -13,7 +13,7 @@ COPY ["HRMS.Shared/HRMS.Shared.csproj", "HRMS.Shared/"]
 COPY ["HRMS.Tests/HRMS.Tests.csproj", "HRMS.Tests/"]
 COPY ["HRMS.Api/HRMS.Api.csproj", "HRMS.Api/"]
 
-RUN dotnet restore "HRMS.sln"
+RUN dotnet restore "HRMS.Api/HRMS.Api.csproj"
 
 # Copy full source tree and publish
 COPY . .
