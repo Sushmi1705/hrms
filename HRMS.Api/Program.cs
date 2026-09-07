@@ -69,13 +69,19 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(HRMS.
 builder.Services.AddSignalR();
 builder.Services.AddHostedService<HRMS.Api.Services.NotificationBackgroundService>();
 
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5002";
+builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+app.UseForwardedHeaders(new Microsoft.AspNetCore.HttpOverrides.ForwardedHeadersOptions
 {
-    app.UseOpenApi();
-    app.UseSwaggerUi();
-}
+    ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor | Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto
+});
+
+// Enable OpenAPI & Swagger for testing on cloud deployments
+app.UseOpenApi();
+app.UseSwaggerUi();
 
 using (var scope = app.Services.CreateScope())
 {
@@ -88,16 +94,17 @@ using (var scope = app.Services.CreateScope())
 
 app.UseCors("AllowAll");
 
-if (!app.Environment.IsDevelopment())
-{
-    app.UseHttpsRedirection();
-}
 app.UseMiddleware<GlobalExceptionMiddleware>();
 app.UseMiddleware<TenantContextMiddleware>();
 app.UseMiddleware<HRMS.Api.Middleware.AuditLoggingMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Render Health Check endpoints
+app.MapGet("/", () => Results.Ok(new { status = "Healthy", service = "HRMS.Api", timestamp = DateTime.UtcNow }));
+app.MapGet("/health", () => Results.Ok(new { status = "Healthy" }));
+
 app.MapControllers();
 app.MapHub<HRMS.Api.Hubs.NotificationHub>("/hubs/notification");
 

@@ -1,0 +1,40 @@
+# Render Blueprint Configuration for Enterprise HRMS
+# Deploy both Backend (.NET 9) and Frontend (React 19 SPA) simultaneously
+
+services:
+  # -------------------------------------------------------------
+  # 1. Backend Web API Service (.NET 9 Docker Container)
+  # -------------------------------------------------------------
+  - type: web
+    name: hrms-backend
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    region: oregon
+    healthCheckPath: /health
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: PORT
+        value: 10000
+
+  # -------------------------------------------------------------
+  # 2. Frontend Web Application (React 19 Vite Static Site)
+  # -------------------------------------------------------------
+  - type: web
+    name: hrms-frontend
+    runtime: static
+    plan: free
+    region: oregon
+    buildCommand: cd hrms-frontend && npm install && npm run build
+    staticPublishPath: ./hrms-frontend/dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: hrms-backend
+          property: host
