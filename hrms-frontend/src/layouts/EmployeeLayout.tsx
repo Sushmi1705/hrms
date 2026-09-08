@@ -135,6 +135,18 @@ export function EmployeeLayout({ children }: { children: React.ReactNode }) {
           </button>
         </div>
         {navContent(false)}
+
+        {/* Sidebar Switch Portal Footer */}
+        <div className="p-3 border-t border-slate-200 dark:border-slate-800">
+          <button
+            onClick={() => navigate('/')}
+            className="w-full flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950/40 dark:hover:text-rose-400 transition-colors"
+            title="Switch to Role Selection / Main Page"
+          >
+            <ArrowLeft className="w-4 h-4 shrink-0 text-rose-500" />
+            {!collapsed && <span>Switch Portal</span>}
+          </button>
+        </div>
       </aside>
 
       {/* MOBILE DRAWER OVERLAY */}
@@ -156,6 +168,15 @@ export function EmployeeLayout({ children }: { children: React.ReactNode }) {
               </button>
             </div>
             {navContent(true)}
+            <div className="p-3 border-t border-slate-200 dark:border-slate-800">
+              <button
+                onClick={() => navigate('/')}
+                className="w-full flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4 shrink-0" />
+                <span>Switch Portal</span>
+              </button>
+            </div>
           </div>
           <div className="flex-1" onClick={() => setMobileOpen(false)} />
         </div>
@@ -185,13 +206,14 @@ export function EmployeeLayout({ children }: { children: React.ReactNode }) {
 
           <div className="flex items-center space-x-3">
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
-              onClick={() => navigate('/login')}
-              className="text-xs text-slate-500 hover:text-indigo-600 rounded-xl hidden sm:flex items-center gap-1.5"
+              onClick={() => navigate('/')}
+              className="text-xs text-slate-700 dark:text-slate-200 hover:text-indigo-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl flex items-center gap-1.5 h-9 px-3 border-slate-200 dark:border-slate-700"
+              title="Return to Role Selection / Main Page"
             >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              Switch Portal
+              <ArrowLeft className="w-3.5 h-3.5 text-rose-500" />
+              <span className="hidden sm:inline font-medium">Switch Portal</span>
             </Button>
 
             <button 

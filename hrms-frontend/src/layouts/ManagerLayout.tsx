@@ -104,18 +104,31 @@ export default function ManagerLayout({ children }: { children: ReactNode }) {
       {/* Footer */}
       <div style={{ padding: "12px 16px", borderTop: "1px solid #1e293b" }}>
         {!collapsed && (
-          <div style={{ display: "flex", gap: 8 }}>
-            <Link to="/admin" style={{ flex: 1, padding: "8px 10px", background: "#1e293b", border: "1px solid #334155", borderRadius: 8, color: "#94a3b8", fontSize: 11, textAlign: "center", textDecoration: "none", transition: "all 0.2s" }}
-              onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.borderColor = "#6366f1"}
-              onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.borderColor = "#334155"}>
-              🏢 HR Admin
-            </Link>
-            <Link to="/employee" style={{ flex: 1, padding: "8px 10px", background: "#1e293b", border: "1px solid #334155", borderRadius: 8, color: "#94a3b8", fontSize: 11, textAlign: "center", textDecoration: "none", transition: "all 0.2s" }}
-              onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.borderColor = "#8b5cf6"}
-              onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.borderColor = "#334155"}>
-              👤 My ESS
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <div style={{ display: "flex", gap: 8 }}>
+              <Link to="/admin" style={{ flex: 1, padding: "8px 10px", background: "#1e293b", border: "1px solid #334155", borderRadius: 8, color: "#94a3b8", fontSize: 11, textAlign: "center", textDecoration: "none", transition: "all 0.2s" }}
+                onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.borderColor = "#6366f1"}
+                onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.borderColor = "#334155"}>
+                🏢 HR Admin
+              </Link>
+              <Link to="/employee" style={{ flex: 1, padding: "8px 10px", background: "#1e293b", border: "1px solid #334155", borderRadius: 8, color: "#94a3b8", fontSize: 11, textAlign: "center", textDecoration: "none", transition: "all 0.2s" }}
+                onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.borderColor = "#8b5cf6"}
+                onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.borderColor = "#334155"}>
+                👤 My ESS
+              </Link>
+            </div>
+            <Link to="/" style={{ display: "block", width: "100%", padding: "8px 10px", background: "#1e293b", border: "1px solid #334155", borderRadius: 8, color: "#cbd5e1", fontSize: 11, textAlign: "center", textDecoration: "none", transition: "all 0.2s" }}
+              onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = "#f43f5e"; (e.currentTarget as HTMLAnchorElement).style.color = "#fff"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = "#334155"; (e.currentTarget as HTMLAnchorElement).style.color = "#cbd5e1"; }}
+              title="Return to Main Portal Selection Screen">
+              🚪 Switch Portal / Exit
             </Link>
           </div>
+        )}
+        {collapsed && (
+          <Link to="/" style={{ display: "flex", justifyContent: "center", padding: "8px 0", color: "#94a3b8", textDecoration: "none", fontSize: 16 }} title="Switch Portal">
+            🚪
+          </Link>
         )}
       </div>
     </div>
@@ -152,7 +165,17 @@ export default function ManagerLayout({ children }: { children: ReactNode }) {
               </span>
             </nav>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <Link
+              to="/"
+              style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 12px", background: "#1e293b", border: "1px solid #334155", borderRadius: 8, color: "#cbd5e1", fontSize: 12, fontWeight: 500, textDecoration: "none", transition: "all 0.2s" }}
+              onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = "#6366f1"; (e.currentTarget as HTMLAnchorElement).style.color = "#fff"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = "#334155"; (e.currentTarget as HTMLAnchorElement).style.color = "#cbd5e1"; }}
+              title="Return to Main Portal Selection Screen"
+            >
+              <span>🔄</span>
+              <span>Switch Portal</span>
+            </Link>
             <div style={{ padding: "6px 12px", background: "#6366f115", border: "1px solid #6366f133", borderRadius: 8, color: "#818cf8", fontSize: 12, fontWeight: 600 }}>👔 Manager View</div>
           </div>
         </div>

@@ -105,6 +105,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Login />} />
+          <Route path="/login" element={<Login />} />
           
           {/* HR Admin Portal */}
           <Route path="/admin" element={<AdminLayout><HRAdminDashboardPage /></AdminLayout>} />

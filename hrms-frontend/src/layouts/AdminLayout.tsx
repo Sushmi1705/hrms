@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Target, Banknote, CalendarRange, LayoutDashboard, Building2, Briefcase, MapPin, Map, Bell, Search, Menu, User, ChevronRight, Users, GraduationCap, DollarSign, Network, Clock, Settings, FileText, BarChart, Shield, Package, Layers, UserCheck, ClipboardCheck, FileSpreadsheet, TrendingUp, Award, ShieldCheck, CheckCircle, Plane, Receipt, CreditCard } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Target, Banknote, CalendarRange, LayoutDashboard, Building2, Briefcase, MapPin, Map, Bell, Search, Menu, User, ChevronRight, Users, GraduationCap, DollarSign, Network, Clock, Settings, FileText, BarChart, Shield, Package, Layers, UserCheck, ClipboardCheck, FileSpreadsheet, TrendingUp, Award, ShieldCheck, CheckCircle, Plane, Receipt, CreditCard, LogOut } from 'lucide-react';
 import { NotificationBell } from '../components/NotificationBell';
+import { Button } from '../components/ui/button';
 
 export function SidebarItem({ icon: Icon, label, to, collapsed }: { icon: any, label: string, to: string, collapsed: boolean }) {
   const location = useLocation();
@@ -17,6 +18,7 @@ export function SidebarItem({ icon: Icon, label, to, collapsed }: { icon: any, l
 export function AdminLayout({ children }: { children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   
   const getBreadcrumb = () => {
     const path = location.pathname.split('/').pop();
@@ -125,6 +127,18 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
             </div>
           </div>
         </div>
+
+        {/* Sidebar Switch Portal Footer */}
+        <div className="p-3 border-t border-slate-200 dark:border-slate-800">
+          <button
+            onClick={() => navigate('/')}
+            className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950/40 dark:hover:text-rose-400 transition-colors"
+            title="Switch to Role Selection / Main Page"
+          >
+            <LogOut className="w-4 h-4 shrink-0 text-rose-500" />
+            {!collapsed && <span>Switch Portal</span>}
+          </button>
+        </div>
       </aside>
 
       <div className="flex-1 flex flex-col h-screen overflow-hidden relative">
@@ -134,12 +148,22 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
             <ChevronRight className="w-4 h-4" />
             <span className="font-medium text-foreground">{getBreadcrumb()}</span>
           </div>
-          <div className="flex items-center space-x-6">
+          <div className="flex items-center space-x-4">
             <div className="relative hidden md:block">
               <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
               <input type="text" placeholder="Search HR Admin..." className="w-64 h-9 bg-slate-100/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-full pl-9 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
             </div>
             <NotificationBell />
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate('/')}
+              className="flex items-center gap-1.5 text-xs h-9 px-3 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200"
+              title="Switch to Role Selection / Main Page"
+            >
+              <LogOut className="w-3.5 h-3.5 text-rose-500" />
+              <span className="hidden sm:inline font-medium">Switch Portal</span>
+            </Button>
             <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-primary to-purple-400 flex items-center justify-center text-white shadow-md cursor-pointer border-2 border-white dark:border-slate-800 ring-2 ring-transparent hover:ring-primary/30 transition-all">
               <User className="w-5 h-5" />
             </div>
