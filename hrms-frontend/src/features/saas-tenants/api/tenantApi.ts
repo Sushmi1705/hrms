@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { API_BASE_URL } from '@/lib/api';
 import {
   PlatformDashboardData,
   PagedResult,
@@ -10,7 +11,7 @@ import {
   ImpersonationSessionResult
 } from '../types/tenant';
 
-const API_BASE = 'http://localhost:5002/api/v1/platform';
+const API_BASE = `${API_BASE_URL}/api/v1/platform`;
 
 const api = axios.create({
   baseURL: API_BASE,

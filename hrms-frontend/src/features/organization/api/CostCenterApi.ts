@@ -1,4 +1,5 @@
-﻿import axios from 'axios';
+import axios from 'axios';
+import { API_BASE_URL } from '@/lib/api';
 
 export interface CostCenterDto {
   id: string;
@@ -6,7 +7,7 @@ export interface CostCenterDto {
   name: string;
 }
 
-const API_URL = 'http://localhost:5002/api/v1/CostCenter';
+const API_URL = `${API_BASE_URL}/api/v1/CostCenter`;
 
 export const getCostCenters = async (): Promise<CostCenterDto[]> => {
   const response = await axios.get(API_URL);

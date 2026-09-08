@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card';
 import { Button } from '../../../components/ui/button';
 import { Search, Filter, MoreHorizontal, CheckCircle, Clock, AlertCircle, RefreshCw } from 'lucide-react';
+import { API_BASE_URL } from '@/lib/api';
 
 export function DataComparison() {
   const [page, setPage] = useState(1);
@@ -11,7 +12,7 @@ export function DataComparison() {
   const { data, isLoading, isError, refetch, isFetching } = useQuery({
     queryKey: ['DataComparison', page, search],
     queryFn: async () => {
-      const res = await fetch(`http://localhost:5002/api/v1/audit/changes/11111111-1111-1111-1111-111111111111?page=` + page);
+      const res = await fetch(`${API_BASE_URL}/api/v1/audit/changes/11111111-1111-1111-1111-111111111111?page=` + page);
       if (!res.ok) throw new Error('Failed to fetch data');
       return res.json();
     }

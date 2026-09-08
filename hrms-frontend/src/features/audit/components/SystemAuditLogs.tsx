@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui
 import { Button } from '../../../components/ui/button';
 import { Search, Filter, RefreshCw, CheckCircle, Clock, AlertCircle, Download, Columns, MoreHorizontal } from 'lucide-react';
 import { AuditDetailsDrawer } from './AuditDetailsDrawer';
+import { API_BASE_URL } from '@/lib/api';
 
 export function SystemAuditLogs() {
   const [page, setPage] = useState(1);
@@ -25,7 +26,7 @@ export function SystemAuditLogs() {
         action: actionFilter !== 'All' ? actionFilter : '',
         severity: severityFilter !== 'All' ? severityFilter : ''
       });
-      const res = await fetch(`http://localhost:5002/api/v1/audit/logs?${qs.toString()}`);
+      const res = await fetch(`${API_BASE_URL}/api/v1/audit/logs?${qs.toString()}`);
       if (!res.ok) throw new Error('Failed to fetch data');
       return res.json();
     }

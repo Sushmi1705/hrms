@@ -1,5 +1,6 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { API_BASE_URL } from '@/lib/api';
 import { Card, CardContent } from '../../../components/ui/card';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
@@ -24,7 +25,7 @@ export function LeaveRequestsRegister() {
   const { data: requests, isLoading } = useQuery({
     queryKey: ['leave-requests', 'all'],
     queryFn: async () => {
-      const res = await fetch('http://localhost:5002/api/v1/Leave/requests');
+      const res = await fetch(`${API_BASE_URL}/api/v1/Leave/requests`);
       if (!res.ok) throw new Error('Network response was not ok');
       return res.json();
     }

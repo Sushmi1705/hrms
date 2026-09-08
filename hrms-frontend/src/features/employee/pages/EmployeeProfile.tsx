@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { API_BASE_URL } from '@/lib/api';
 import { 
   ArrowLeft, Edit, ChevronDown, Mail, Phone, MapPin, 
   Building, Calendar, User, Briefcase, Clock, CalendarCheck, 
@@ -43,7 +44,7 @@ export function EmployeeProfile() {
   const { data: employee, isLoading, isError } = useQuery({
     queryKey: ['employee', id],
     queryFn: async () => {
-      const res = await axios.get('http://localhost:5002/api/v1/Employees');
+      const res = await axios.get(`${API_BASE_URL}/api/v1/Employees`);
       const employees = res.data.data || res.data.value || res.data || [];
       const employee = employees.find((e: any) => e.id === id);
       if (!employee) throw new Error("Employee not found");

@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Select } from '@/components/ui/select';
 import { toast } from 'sonner';
 import axios from 'axios';
+import { API_BASE_URL } from '@/lib/api';
 import { useQueryClient } from '@tanstack/react-query';
 import { 
   User, Briefcase, Mail, Calendar, Loader2, CheckCircle2, ChevronRight,
@@ -70,10 +71,10 @@ export function EmployeeFormDrawer({ open, onOpenChange, employeeToEdit }: any) 
     setIsSaving(true);
     try {
       if (isEditing) {
-        await axios.put('http://localhost:5002/api/v1/Employees/' + employeeToEdit.id, { id: employeeToEdit.id, ...formData });
+        await axios.put(`${API_BASE_URL}/api/v1/Employees/` + employeeToEdit.id, { id: employeeToEdit.id, ...formData });
         toast.success("Employee updated successfully");
       } else {
-        await axios.post('http://localhost:5002/api/v1/Employees', formData);
+        await axios.post(`${API_BASE_URL}/api/v1/Employees`, formData);
         toast.success("Employee created successfully");
       }
       queryClient.invalidateQueries({ queryKey: ['employees'] });

@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { API_BASE_URL } from '@/lib/api';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../../components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../components/ui/tabs';
 import { Users, GraduationCap, BookOpen, Award, CheckCircle, BrainCircuit } from 'lucide-react';
@@ -54,7 +55,7 @@ export function HRLearningDashboard() {
   });
 
   useEffect(() => {
-    fetch('http://localhost:5002/api/v1/learning/analytics')
+    fetch(`${API_BASE_URL}/api/v1/learning/analytics`)
       .then(res => res.json())
       .then(data => {
         if (data && data.totalCourses) {

@@ -1,5 +1,6 @@
-﻿import React from 'react';
+import React from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { API_BASE_URL } from '@/lib/api';
 import { Card, CardHeader, CardTitle, CardContent } from '../../../components/ui/card';
 import { Badge } from '../../../components/ui/badge';
 import { Progress } from '../../../components/ui/progress';
@@ -10,7 +11,7 @@ export function EmployeeLeaveProfile({ employeeId }: { employeeId: string }) {
   const { data: balances, isLoading } = useQuery({
     queryKey: ['leave-balances', employeeId],
     queryFn: async () => {
-      const res = await fetch(`http://localhost:5002/api/v1/Leave/employee/${employeeId}/balances?year=2026`);
+      const res = await fetch(`${API_BASE_URL}/api/v1/Leave/employee/${employeeId}/balances?year=2026`);
       if (!res.ok) throw new Error('Network response was not ok');
       return res.json();
     }

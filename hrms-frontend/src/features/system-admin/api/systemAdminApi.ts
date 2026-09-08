@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { API_BASE_URL } from '@/lib/api';
 import {
   AdminDashboardData,
   UserSummary,
@@ -24,7 +25,7 @@ import {
   EffectivePermission
 } from '../types/systemAdmin';
 
-const API_BASE = 'http://localhost:5002/api/v1/admin';
+const API_BASE = `${API_BASE_URL}/api/v1/admin`;
 
 const api = axios.create({
   baseURL: API_BASE,

@@ -1,8 +1,9 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card';
 import { Button } from '../../../components/ui/button';
 import { Search, Filter, MoreHorizontal, CheckCircle, Clock, AlertCircle, RefreshCw } from 'lucide-react';
+import { API_BASE_URL } from '@/lib/api';
 
 export function DeliveryLogs() {
   const [page, setPage] = useState(1);
@@ -11,7 +12,7 @@ export function DeliveryLogs() {
   const { data, isLoading, isError, refetch, isFetching } = useQuery({
     queryKey: ['DeliveryLogs', page, search],
     queryFn: async () => {
-      const res = await fetch(`http://localhost:5002/api/v1/notification/logs?page=` + page + `&search=` + search);
+      const res = await fetch(`${API_BASE_URL}/api/v1/notification/logs?page=` + page + `&search=` + search);
       if (!res.ok) throw new Error('Failed to fetch data');
       return res.json();
     }

@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { API_BASE_URL } from '@/lib/api';
 import { Card, CardHeader, CardTitle, CardContent } from '../../../components/ui/card';
 import { Button } from '../../../components/ui/button';
 import { Plus, Search, Edit, Trash2 } from 'lucide-react';
@@ -10,7 +11,7 @@ export function ShiftMaster() {
 
   useEffect(() => {
     // Fetch shifts from API
-    fetch('http://localhost:5002/api/v1/Shift/master')
+    fetch(`${API_BASE_URL}/api/v1/Shift/master`)
       .then(res => res.json())
       .then(data => {
         setShifts(data);

@@ -1,4 +1,4 @@
-import { apiClient } from '../../../lib/api';
+import { apiClient, API_BASE_URL } from '../../../lib/api';
 import {
   AssetDto,
   AssetDetailDto,
@@ -243,7 +243,7 @@ export const assetApi = {
 
   exportReportCsv: (filter: any) => {
     const query = new URLSearchParams(filter).toString();
-    window.open(`http://localhost:5002/api/v1/assets/reports/export?${query}`, '_blank');
+    window.open(`${API_BASE_URL}/api/v1/assets/reports/export?${query}`, '_blank');
   },
 
   calculateDepreciation: async (id: string) => {

@@ -14,6 +14,7 @@ import {
   FileSpreadsheet
 } from 'lucide-react';
 import { workflowApi } from '../api/workflowApi';
+import { API_BASE_URL } from '@/lib/api';
 
 export function WorkflowReports() {
   const [slaData, setSlaData] = useState<any>(null);
@@ -59,7 +60,7 @@ export function WorkflowReports() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => window.open('http://localhost:5002/api/v1/workflow/export?type=approvals', '_blank')}
+            onClick={() => window.open(`${API_BASE_URL}/api/v1/workflow/export?type=approvals`, '_blank')}
             className="flex items-center gap-1.5 text-xs"
           >
             <FileSpreadsheet className="w-4 h-4 text-emerald-600" /> Export Approvals CSV
@@ -68,7 +69,7 @@ export function WorkflowReports() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => window.open('http://localhost:5002/api/v1/workflow/export?type=definitions', '_blank')}
+            onClick={() => window.open(`${API_BASE_URL}/api/v1/workflow/export?type=definitions`, '_blank')}
             className="flex items-center gap-1.5 text-xs"
           >
             <Download className="w-4 h-4 text-primary" /> Export Matrix CSV

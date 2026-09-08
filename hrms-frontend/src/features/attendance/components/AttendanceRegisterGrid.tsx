@@ -1,6 +1,7 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { API_BASE_URL } from '@/lib/api';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -78,7 +79,7 @@ export function AttendanceRegisterGrid({ externalFilters }: { externalFilters?: 
     queryKey: ['attendanceRegister', page, pageSize, localSearch, externalFilters],
     queryFn: async () => {
       const qs = buildQueryString();
-      const res = await axios.get(`http://localhost:5002/api/v1/Attendance/register?${qs}`);
+      const res = await axios.get(`${API_BASE_URL}/api/v1/Attendance/register?${qs}`);
       return res.data;
     }
   });

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_BASE_URL } from '@/lib/api';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../../components/ui/card';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
@@ -264,7 +265,7 @@ export function ApprovalInbox({ onSelectRequest }: ApprovalInboxProps) {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => window.open('http://localhost:5002/api/v1/workflow/export?type=inbox', '_blank')}
+              onClick={() => window.open(`${API_BASE_URL}/api/v1/workflow/export?type=inbox`, '_blank')}
               className="flex items-center gap-1.5"
             >
               <Download className="w-4 h-4" /> Export

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { API_BASE_URL } from '@/lib/api';
 import { 
   Users, UserMinus, Clock, FileWarning
 } from 'lucide-react';
@@ -14,7 +15,7 @@ export function ManagerAttendanceDashboard() {
   const { data, isLoading } = useQuery({
     queryKey: ['managerDashboard', managerId],
     queryFn: async () => {
-      const res = await axios.get(`http://localhost:5002/api/v1/Attendance/manager-dashboard/${managerId}`);
+      const res = await axios.get(`${API_BASE_URL}/api/v1/Attendance/manager-dashboard/${managerId}`);
       return res.data;
     }
   });

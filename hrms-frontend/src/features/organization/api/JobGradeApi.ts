@@ -1,4 +1,5 @@
-﻿import axios from 'axios';
+import axios from 'axios';
+import { API_BASE_URL } from '@/lib/api';
 
 export interface JobGradeDto {
   id: string;
@@ -6,7 +7,7 @@ export interface JobGradeDto {
   name: string;
 }
 
-const API_URL = 'http://localhost:5002/api/v1/JobGrade';
+const API_URL = `${API_BASE_URL}/api/v1/JobGrade`;
 
 export const getJobGrades = async (): Promise<JobGradeDto[]> => {
   const response = await axios.get(API_URL);

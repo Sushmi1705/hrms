@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Bell } from 'lucide-react';
 import * as signalR from '@microsoft/signalr';
+import { API_BASE_URL } from '../lib/api';
 
 export function NotificationBell() {
   const [unreadCount, setUnreadCount] = useState(0);
@@ -13,7 +14,7 @@ export function NotificationBell() {
     setNotifications([]);
 
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl("http://localhost:5002/hubs/notification")
+      .withUrl(`${API_BASE_URL}/hubs/notification`)
       .withAutomaticReconnect()
       .build();
 

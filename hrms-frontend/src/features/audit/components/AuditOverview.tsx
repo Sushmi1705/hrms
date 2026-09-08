@@ -1,14 +1,15 @@
-﻿import React from 'react';
+import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card';
 import { Activity, ShieldAlert, Users, Database, FileText, XCircle } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
+import { API_BASE_URL } from '@/lib/api';
 
 export function AuditOverview() {
   const { data, isLoading } = useQuery({
     queryKey: ['AuditAnalytics'],
     queryFn: async () => {
-      const res = await fetch('http://localhost:5002/api/v1/audit/analytics');
+      const res = await fetch(`${API_BASE_URL}/api/v1/audit/analytics`);
       if (!res.ok) throw new Error('Failed to fetch data');
       return res.json();
     }

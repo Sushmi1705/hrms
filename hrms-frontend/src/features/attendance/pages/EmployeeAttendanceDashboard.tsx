@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { API_BASE_URL } from '@/lib/api';
 import { 
   Clock, Play, Square, Pause, Calendar as CalendarIcon, CheckCircle2, ChevronRight, User
 } from 'lucide-react';
@@ -23,14 +24,14 @@ export function EmployeeAttendanceDashboard() {
   const { data: logs, isLoading, refetch } = useQuery({
     queryKey: ['employeeLogs', EMPLOYEE_ID],
     queryFn: async () => {
-      const res = await axios.get(`http://localhost:5002/api/v1/Attendance/logs/${EMPLOYEE_ID}`);
+      const res = await axios.get(`${API_BASE_URL}/api/v1/Attendance/logs/${EMPLOYEE_ID}`);
       return res.data.data;
     }
   });
 
   const handleClockIn = async () => {
     try {
-      await axios.post('http://localhost:5002/api/v1/Attendance/clock-in', { 
+      await axios.post(`${API_BASE_URL}/api/v1/Attendance/clock-in`, { 
         employeeId: EMPLOYEE_ID,
         ipAddress: '192.168.1.100',
         location: 'Office HQ',
@@ -46,7 +47,7 @@ export function EmployeeAttendanceDashboard() {
 
   const handleClockOut = async () => {
     try {
-      await axios.post('http://localhost:5002/api/v1/Attendance/clock-out', { 
+      await axios.post(`${API_BASE_URL}/api/v1/Attendance/clock-out`, { 
         employeeId: EMPLOYEE_ID,
         ipAddress: '192.168.1.100',
         location: 'Office HQ',

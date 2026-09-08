@@ -1,7 +1,8 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { API_BASE_URL } from '@/lib/api';
 import { 
   ArrowLeft, Calendar as CalendarIcon, Clock, Briefcase, 
   MapPin, CheckCircle, XCircle, AlertCircle, FileText, 
@@ -23,7 +24,7 @@ export function EmployeeAttendanceProfile() {
   const { data, isLoading, isError } = useQuery({
     queryKey: ['employeeAttendance', id, currentMonth, currentYear],
     queryFn: async () => {
-      const res = await axios.get(`http://localhost:5002/api/v1/Attendance/employee/${id}?month=${currentMonth}&year=${currentYear}`);
+      const res = await axios.get(`${API_BASE_URL}/api/v1/Attendance/employee/${id}?month=${currentMonth}&year=${currentYear}`);
       return res.data;
     }
   });

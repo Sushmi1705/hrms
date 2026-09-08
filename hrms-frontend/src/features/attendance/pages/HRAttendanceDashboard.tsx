@@ -1,6 +1,7 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { API_BASE_URL } from '@/lib/api';
 import { 
   Users, UserMinus, Clock, AlertTriangle, FileWarning, CheckCircle, 
   Download, Upload, FileText, ChevronRight, Filter, Search, ShieldAlert,
@@ -47,7 +48,7 @@ export function HRAttendanceDashboard() {
   const { data: hrData, isLoading, isError } = useQuery({
     queryKey: ['hrDashboard', startDate, endDate, filters],
     queryFn: async () => {
-      const res = await axios.get(`http://localhost:5002/api/v1/Attendance/analytics?startDate=${startDate}&endDate=${endDate}`);
+      const res = await axios.get(`${API_BASE_URL}/api/v1/Attendance/analytics?startDate=${startDate}&endDate=${endDate}`);
       return res.data;
     }
   });

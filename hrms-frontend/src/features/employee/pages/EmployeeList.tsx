@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
+import { API_BASE_URL } from '@/lib/api';
 import { 
   Plus, Download, Upload, Filter, Search, MoreVertical, LayoutGrid, Loader2, 
   Trash2, FileEdit, Eye, FileText, CalendarCheck, Clock, DollarSign, Ban, History 
@@ -42,13 +43,13 @@ export function EmployeeList() {
   const { data, isLoading, isError } = useQuery<Employee[]>({
     queryKey: ['employees'],
     queryFn: async () => {
-      const res = await axios.get('http://localhost:5002/api/v1/Employees');
+      const res = await axios.get(`${API_BASE_URL}/api/v1/Employees`);
       return Array.isArray(res.data) ? res.data : (res.data.data || res.data.value || []);
     }
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: string) => axios.delete('http://localhost:5002/api/v1/Employees/' + id),
+    mutationFn: (id: string) => axios.delete(`${API_BASE_URL}/api/v1/Employees/` + id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['employees'] });
       toast.success("Employee deleted successfully");

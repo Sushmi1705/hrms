@@ -1,5 +1,6 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { API_BASE_URL } from '@/lib/api';
 import { Card, CardHeader, CardTitle, CardContent } from '../../../components/ui/card';
 import { Button } from '../../../components/ui/button';
 import { X } from 'lucide-react';
@@ -27,7 +28,7 @@ export function HRLeaveDashboard() {
   const { data: analytics, isLoading: analyticsLoading } = useQuery({
     queryKey: ['leave-analytics'],
     queryFn: async () => {
-      const res = await fetch('http://localhost:5002/api/v1/Leave/dashboard');
+      const res = await fetch(`${API_BASE_URL}/api/v1/Leave/dashboard`);
       if (!res.ok) throw new Error('Network response was not ok');
       return res.json();
     },
@@ -37,7 +38,7 @@ export function HRLeaveDashboard() {
   const { data: requests, isLoading: requestsLoading } = useQuery({
     queryKey: ['leave-requests', 'pending'],
     queryFn: async () => {
-      const res = await fetch('http://localhost:5002/api/v1/Leave/requests?status=Pending');
+      const res = await fetch(`${API_BASE_URL}/api/v1/Leave/requests?status=Pending`);
       if (!res.ok) throw new Error('Network response was not ok');
       return res.json();
     }

@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '@/lib/api';
 import {
   WorkflowDashboardAnalytics,
   WorkflowDefinition,
@@ -9,7 +10,7 @@ import {
   PagedResult
 } from '../types/workflow';
 
-const BASE_URL = 'http://localhost:5002/api/v1/workflow';
+const BASE_URL = `${API_BASE_URL}/api/v1/workflow`;
 
 export const workflowApi = {
   // 1. Dashboard

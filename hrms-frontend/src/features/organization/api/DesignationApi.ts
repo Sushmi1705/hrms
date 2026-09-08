@@ -1,4 +1,5 @@
-﻿import axios from 'axios';
+import axios from 'axios';
+import { API_BASE_URL } from '@/lib/api';
 
 export interface DesignationDto {
   id: string;
@@ -6,7 +7,7 @@ export interface DesignationDto {
   name: string;
 }
 
-const API_URL = 'http://localhost:5002/api/v1/Designation';
+const API_URL = `${API_BASE_URL}/api/v1/Designation`;
 
 export const getDesignations = async (): Promise<DesignationDto[]> => {
   const response = await axios.get(API_URL);
