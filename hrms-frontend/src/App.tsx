@@ -98,9 +98,6 @@ import { PlatformAdminDashboard } from './features/saas-tenants/pages/PlatformAd
 
 const queryClient = new QueryClient();
 
-// Placeholder Dashboard components
-const DashboardAdmin = () => <div className="p-4 text-2xl font-bold">HR Admin Dashboard Overview</div>;
-
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -109,7 +106,7 @@ function App() {
           <Route path="/" element={<Login />} />
           
           {/* HR Admin Portal */}
-          <Route path="/admin" element={<AdminLayout><DashboardAdmin /></AdminLayout>} />
+          <Route path="/admin" element={<AdminLayout><ExecutiveDashboardPage /></AdminLayout>} />
           <Route path="/admin/system" element={<AdminLayout><SystemAdminDashboard /></AdminLayout>} />
           <Route path="/admin/employees" element={<AdminLayout><EmployeeList /></AdminLayout>} />
           <Route path="/admin/employees/:id" element={<AdminLayout><EmployeeProfile /></AdminLayout>} />
