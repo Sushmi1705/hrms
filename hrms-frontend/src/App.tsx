@@ -46,6 +46,7 @@ import {
 } from './features/travel';
 import { TeamAssetsPage } from './features/asset/pages/TeamAssetsPage';
 import { ExecutiveDashboardPage } from './features/reports/pages/ExecutiveDashboardPage';
+import { HRAdminDashboardPage } from './features/dashboard/pages/HRAdminDashboardPage';
 
 import { CompensationDashboardPage } from './features/compensation/pages/CompensationDashboardPage';
 import { SalaryStructuresPage } from './features/compensation/pages/SalaryStructuresPage';
@@ -106,7 +107,7 @@ function App() {
           <Route path="/" element={<Login />} />
           
           {/* HR Admin Portal */}
-          <Route path="/admin" element={<AdminLayout><ExecutiveDashboardPage /></AdminLayout>} />
+          <Route path="/admin" element={<AdminLayout><HRAdminDashboardPage /></AdminLayout>} />
           <Route path="/admin/system" element={<AdminLayout><SystemAdminDashboard /></AdminLayout>} />
           <Route path="/admin/employees" element={<AdminLayout><EmployeeList /></AdminLayout>} />
           <Route path="/admin/employees/:id" element={<AdminLayout><EmployeeProfile /></AdminLayout>} />
