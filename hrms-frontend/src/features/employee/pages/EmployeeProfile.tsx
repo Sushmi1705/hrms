@@ -70,7 +70,7 @@ export function EmployeeProfile() {
     return (
       <div className="h-full flex flex-col items-center justify-center text-slate-500">
         <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-2">Employee Not Found</h2>
-        <Button variant="outline" onClick={() => navigate('/employees')}>Back to Employees</Button>
+        <Button variant="outline" onClick={() => navigate('/admin/employees')}>Back to Employees</Button>
       </div>
     );
   }
@@ -80,7 +80,7 @@ export function EmployeeProfile() {
       
       {/* Top Breadcrumb & Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <button onClick={() => navigate('/employees')} className="group flex items-center text-sm font-medium text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors">
+        <button onClick={() => navigate('/admin/employees')} className="group flex items-center text-sm font-medium text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors">
           <div className="w-8 h-8 rounded-full border border-slate-200 dark:border-slate-800 flex items-center justify-center mr-3 group-hover:bg-slate-100 dark:group-hover:bg-slate-800 transition-colors">
             <ArrowLeft className="w-4 h-4" />
           </div>

@@ -112,6 +112,8 @@ function App() {
           <Route path="/admin/system" element={<AdminLayout><SystemAdminDashboard /></AdminLayout>} />
           <Route path="/admin/employees" element={<AdminLayout><EmployeeList /></AdminLayout>} />
           <Route path="/admin/employees/:id" element={<AdminLayout><EmployeeProfile /></AdminLayout>} />
+          <Route path="/employees" element={<Navigate to="/admin/employees" replace />} />
+          <Route path="/employees/:id" element={<AdminLayout><EmployeeProfile /></AdminLayout>} />
           <Route path="/admin/attendance" element={<AdminLayout><HRAttendanceDashboard /></AdminLayout>} />
           <Route path="/admin/attendance/employee/:id" element={<AdminLayout><EmployeeAttendanceProfile /></AdminLayout>} />
           <Route path="/admin/leave" element={<AdminLayout><HRLeaveDashboard /></AdminLayout>} />

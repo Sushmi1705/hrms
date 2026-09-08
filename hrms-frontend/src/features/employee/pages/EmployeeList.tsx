@@ -191,7 +191,7 @@ export function EmployeeList() {
               {filteredData?.map((item) => (
                 <tr 
                   key={item.id} 
-                  onClick={() => navigate('/employees/' + item.id)} 
+                  onClick={() => navigate('/admin/employees/' + item.id)} 
                   className="hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors group cursor-pointer"
                 >
                   <td className="px-6 py-4 text-center" onClick={(e) => e.stopPropagation()}>
@@ -238,27 +238,27 @@ export function EmployeeList() {
                       <DropdownMenuContent align="end" className="w-48">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onSelect={() => navigate('/employees/' + item.id)}>
+                        <DropdownMenuItem onSelect={() => navigate('/admin/employees/' + item.id)}>
                           <Eye className="mr-2 h-4 w-4 text-slate-400" /> View Profile
                         </DropdownMenuItem>
                         <DropdownMenuItem onSelect={(e) => { e.preventDefault(); setEmployeeToEdit(item); setDrawerOpen(true); }}>
                           <FileEdit className="mr-2 h-4 w-4 text-slate-400" /> Edit Employee
                         </DropdownMenuItem>
-                        <DropdownMenuItem onSelect={() => navigate('/employees/' + item.id, { state: { tab: 'Documents' } })}>
+                        <DropdownMenuItem onSelect={() => navigate('/admin/employees/' + item.id, { state: { tab: 'Documents' } })}>
                           <FileText className="mr-2 h-4 w-4 text-slate-400" /> Documents
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onSelect={() => navigate('/employees/' + item.id, { state: { tab: 'Attendance' } })}>
+                        <DropdownMenuItem onSelect={() => navigate('/admin/employees/' + item.id, { state: { tab: 'Attendance' } })}>
                           <Clock className="mr-2 h-4 w-4 text-slate-400" /> Attendance
                         </DropdownMenuItem>
-                        <DropdownMenuItem onSelect={() => navigate('/employees/' + item.id, { state: { tab: 'Leave' } })}>
+                        <DropdownMenuItem onSelect={() => navigate('/admin/employees/' + item.id, { state: { tab: 'Leave' } })}>
                           <CalendarCheck className="mr-2 h-4 w-4 text-slate-400" /> Leave
                         </DropdownMenuItem>
-                        <DropdownMenuItem onSelect={() => navigate('/employees/' + item.id, { state: { tab: 'Payroll' } })}>
+                        <DropdownMenuItem onSelect={() => navigate('/admin/employees/' + item.id, { state: { tab: 'Payroll' } })}>
                           <DollarSign className="mr-2 h-4 w-4 text-slate-400" /> Payroll
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onSelect={() => navigate('/employees/' + item.id, { state: { tab: 'Audit' } })}>
+                        <DropdownMenuItem onSelect={() => navigate('/admin/employees/' + item.id, { state: { tab: 'Audit' } })}>
                           <History className="mr-2 h-4 w-4 text-slate-400" /> Audit History
                         </DropdownMenuItem>
                         <DropdownMenuItem className="text-amber-600 dark:text-amber-400 focus:text-amber-700 dark:focus:text-amber-300">
