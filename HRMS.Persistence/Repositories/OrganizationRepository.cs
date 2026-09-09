@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -34,5 +34,10 @@ public class OrganizationRepository : IOrganizationRepository
     {
         _db.Set<T>().Update(entity);
         await _db.SaveChangesAsync(ct);
+    }
+
+    public IQueryable<T> Query<T>() where T : BaseAuditableEntity
+    {
+        return _db.Set<T>().AsNoTracking();
     }
 }

@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using MediatR;
-using HRMS.Application.Features.Organization.Designation.Queries;
-using HRMS.Application.Features.Organization.Designation.Commands;
-using System.Threading.Tasks;
 using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using MediatR;
+using HRMS.Application.Features.Organization.Designation.Commands;
+using HRMS.Application.Features.Organization.Designation.Queries;
 
 namespace HRMS.Api.Controllers;
 
@@ -14,17 +14,32 @@ public class DesignationController : ControllerBase
     private readonly IMediator _mediator;
     public DesignationController(IMediator mediator) => _mediator = mediator;
 
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] CreateDesignationCommand command)
+    {
+        var id = await _mediator.Send(command);
+        return Ok(new { Id = id });
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(Guid id)
+    {
+        var result = await _mediator.Send(new GetDesignationByIdQuery(id));
+        return result != null ? Ok(result) : NotFound();
+    }
+
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
         return Ok(await _mediator.Send(new GetAllDesignationQuery()));
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateDesignationCommand command)
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateDesignationCommand command)
     {
-        var id = await _mediator.Send(command);
-        return Ok(new { Id = id });
+        if (id != command.Id) command = command with { Id = id };
+        var result = await _mediator.Send(command);
+        return result ? Ok(new { success = true, message = "Designation updated successfully." }) : NotFound();
     }
 
     [HttpDelete("{id}")]

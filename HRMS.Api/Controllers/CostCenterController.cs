@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using MediatR;
-using HRMS.Application.Features.Organization.CostCenter.Queries;
-using HRMS.Application.Features.Organization.CostCenter.Commands;
-using System.Threading.Tasks;
 using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using MediatR;
+using HRMS.Application.Features.Organization.CostCenter.Commands;
+using HRMS.Application.Features.Organization.CostCenter.Queries;
 
 namespace HRMS.Api.Controllers;
 
@@ -14,17 +14,32 @@ public class CostCenterController : ControllerBase
     private readonly IMediator _mediator;
     public CostCenterController(IMediator mediator) => _mediator = mediator;
 
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] CreateCostCenterCommand command)
+    {
+        var id = await _mediator.Send(command);
+        return Ok(new { Id = id });
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(Guid id)
+    {
+        var result = await _mediator.Send(new GetCostCenterByIdQuery(id));
+        return result != null ? Ok(result) : NotFound();
+    }
+
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
         return Ok(await _mediator.Send(new GetAllCostCenterQuery()));
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateCostCenterCommand command)
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateCostCenterCommand command)
     {
-        var id = await _mediator.Send(command);
-        return Ok(new { Id = id });
+        if (id != command.Id) command = command with { Id = id };
+        var result = await _mediator.Send(command);
+        return result ? Ok(new { success = true, message = "Cost Center updated successfully." }) : NotFound();
     }
 
     [HttpDelete("{id}")]

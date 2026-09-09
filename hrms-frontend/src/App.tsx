@@ -9,6 +9,7 @@ import { DepartmentList } from './features/organization/pages/DepartmentList';
 import { DesignationList } from './features/organization/pages/DesignationList';
 import { JobGradeList } from './features/organization/pages/JobGradeList';
 import { CostCenterList } from './features/organization/pages/CostCenterList';
+import { OrganizationHubPage } from './features/organization/pages/OrganizationHubPage';
 import DesignSystem from './pages/DesignSystem';
 import { EmployeeList } from './features/employee/pages/EmployeeList';
 import { EmployeeProfile } from './features/employee/pages/EmployeeProfile';
@@ -128,6 +129,7 @@ function App() {
           <Route path="/admin/notifications" element={<AdminLayout><HRNotificationDashboard /></AdminLayout>} />
           <Route path="/admin/audit" element={<AdminLayout><HRAuditDashboard /></AdminLayout>} />
           
+          <Route path="/admin/organization" element={<AdminLayout><OrganizationHubPage /></AdminLayout>} />
           <Route path="/admin/companies" element={<AdminLayout><CompanyList /></AdminLayout>} />
           <Route path="/admin/business-units" element={<AdminLayout><BusinessUnitList /></AdminLayout>} />
           <Route path="/admin/branches" element={<AdminLayout><BranchList /></AdminLayout>} />

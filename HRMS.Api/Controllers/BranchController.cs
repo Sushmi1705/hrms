@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
@@ -18,10 +18,22 @@ public class BranchController : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreateBranchCommand command) => Ok(await _mediator.Send(command));
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(Guid id) => Ok(await _mediator.Send(new GetBranchByIdQuery(id)));
+    public async Task<IActionResult> GetById(Guid id) 
+    {
+        var result = await _mediator.Send(new GetBranchByIdQuery(id));
+        return result != null ? Ok(result) : NotFound();
+    }
 
     [HttpGet]
     public async Task<IActionResult> GetAll() => Ok(await _mediator.Send(new GetAllBranchQuery()));
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateBranchCommand command)
+    {
+        if (id != command.Id) command = command with { Id = id };
+        var result = await _mediator.Send(command);
+        return result ? Ok(new { success = true, message = "Branch updated successfully." }) : NotFound();
+    }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id) => Ok(await _mediator.Send(new DeleteBranchCommand(id)));

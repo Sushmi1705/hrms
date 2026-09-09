@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -14,10 +14,19 @@ public class GetBusinessUnitByIdQueryHandler : IRequestHandler<GetBusinessUnitBy
 {
     private readonly IOrganizationRepository _db;
     public GetBusinessUnitByIdQueryHandler(IOrganizationRepository db) { _db = db; }
-    public async Task<BusinessUnitDto> Handle(GetBusinessUnitByIdQuery req, CancellationToken ct) {
-        var e = await _db.GetByIdAsync<HRMS.Domain.Entities.Organization.BusinessUnit>(req.Id, ct);
-        if (e == null) return null;
-        return new BusinessUnitDto { Id = e.Id, Code = e.Code, Name = e.Name };
+    public Task<BusinessUnitDto?> Handle(GetBusinessUnitByIdQuery req, CancellationToken ct) {
+        var res = _db.Query<HRMS.Domain.Entities.Organization.BusinessUnit>()
+            .Where(x => !x.IsDeleted && x.Id == req.Id)
+            .Select(x => new BusinessUnitDto { 
+                Id = x.Id, 
+                CompanyId = x.CompanyId,
+                CompanyName = x.Company != null ? x.Company.Name : string.Empty,
+                Code = x.Code, 
+                Name = x.Name,
+                BranchesCount = x.Branches.Count(b => !b.IsDeleted)
+            })
+            .FirstOrDefault();
+        return Task.FromResult(res);
     }
 }
 
@@ -26,8 +35,19 @@ public class GetAllBusinessUnitQueryHandler : IRequestHandler<GetAllBusinessUnit
 {
     private readonly IOrganizationRepository _db;
     public GetAllBusinessUnitQueryHandler(IOrganizationRepository db) { _db = db; }
-    public async Task<List<BusinessUnitDto>> Handle(GetAllBusinessUnitQuery req, CancellationToken ct) {
-        var list = await _db.GetAllAsync<HRMS.Domain.Entities.Organization.BusinessUnit>(ct);
-        return list.Select(x => new BusinessUnitDto { Id = x.Id, Code = x.Code, Name = x.Name }).ToList();
+    public Task<List<BusinessUnitDto>> Handle(GetAllBusinessUnitQuery req, CancellationToken ct) {
+        var list = _db.Query<HRMS.Domain.Entities.Organization.BusinessUnit>()
+            .Where(x => !x.IsDeleted)
+            .Select(x => new BusinessUnitDto { 
+                Id = x.Id, 
+                CompanyId = x.CompanyId,
+                CompanyName = x.Company != null ? x.Company.Name : string.Empty,
+                Code = x.Code, 
+                Name = x.Name,
+                BranchesCount = x.Branches.Count(b => !b.IsDeleted)
+            })
+            .OrderBy(x => x.Name)
+            .ToList();
+        return Task.FromResult(list);
     }
 }

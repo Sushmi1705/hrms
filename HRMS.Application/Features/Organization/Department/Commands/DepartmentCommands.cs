@@ -1,42 +1,57 @@
-﻿using MediatR;
-using DomainEntity = HRMS.Domain.Entities.Organization.Department;
-using HRMS.Application.Interfaces.Repositories;
+using System;
+using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
-using System;
+using HRMS.Application.Interfaces.Repositories;
+using HRMS.Domain.Entities.Organization;
 
 namespace HRMS.Application.Features.Organization.Department.Commands;
 
-public record CreateDepartmentCommand(string Code, string Name) : IRequest<Guid>;
-public record DeleteDepartmentCommand(Guid Id) : IRequest<bool>;
-
-public class DepartmentCommandHandlers : 
-    IRequestHandler<CreateDepartmentCommand, Guid>,
-    IRequestHandler<DeleteDepartmentCommand, bool>
+public record CreateDepartmentCommand(string Code, string Name, Guid? BranchId = null) : IRequest<Guid>;
+public class CreateDepartmentCommandHandler : IRequestHandler<CreateDepartmentCommand, Guid>
 {
-    private readonly IOrganizationRepository _repo;
-    public DepartmentCommandHandlers(IOrganizationRepository repo) => _repo = repo;
-
-    public async Task<Guid> Handle(CreateDepartmentCommand request, CancellationToken ct)
-    {
-        var entity = new DomainEntity { 
+    private readonly IOrganizationRepository _db;
+    public CreateDepartmentCommandHandler(IOrganizationRepository db) { _db = db; }
+    public async Task<Guid> Handle(CreateDepartmentCommand req, CancellationToken ct) {
+        var entity = new HRMS.Domain.Entities.Organization.Department 
+        { 
             Id = Guid.NewGuid(),
-            Code = request.Code, 
-            Name = request.Name, 
-            CreatedAt = DateTime.UtcNow
+            Code = req.Code, 
+            Name = req.Name,
+            BranchId = req.BranchId ?? Guid.Empty
         };
-        await _repo.AddAsync(entity, ct);
+        await _db.AddAsync(entity, ct);
         return entity.Id;
     }
+}
 
-    public async Task<bool> Handle(DeleteDepartmentCommand request, CancellationToken ct)
-    {
-        var entity = await _repo.GetByIdAsync<DomainEntity>(request.Id, ct);
+public record UpdateDepartmentCommand(Guid Id, string Code, string Name, Guid? BranchId = null) : IRequest<bool>;
+public class UpdateDepartmentCommandHandler : IRequestHandler<UpdateDepartmentCommand, bool>
+{
+    private readonly IOrganizationRepository _db;
+    public UpdateDepartmentCommandHandler(IOrganizationRepository db) { _db = db; }
+    public async Task<bool> Handle(UpdateDepartmentCommand req, CancellationToken ct) {
+        var entity = await _db.GetByIdAsync<HRMS.Domain.Entities.Organization.Department>(req.Id, ct);
         if (entity == null) return false;
-        // Soft delete assuming BaseAuditableEntity has IsDeleted. Otherwise just ignore deletion logic for now
-        entity.DeletedAt = DateTime.UtcNow;
-        entity.IsDeleted = true;
-        await _repo.UpdateAsync(entity, ct);
+        entity.Code = req.Code;
+        entity.Name = req.Name;
+        if (req.BranchId.HasValue && req.BranchId.Value != Guid.Empty)
+        {
+            entity.BranchId = req.BranchId.Value;
+        }
+        await _db.UpdateAsync(entity, ct);
+        return true;
+    }
+}
+
+public record DeleteDepartmentCommand(Guid Id) : IRequest<bool>;
+public class DeleteDepartmentCommandHandler : IRequestHandler<DeleteDepartmentCommand, bool>
+{
+    private readonly IOrganizationRepository _db;
+    public DeleteDepartmentCommandHandler(IOrganizationRepository db) { _db = db; }
+    public async Task<bool> Handle(DeleteDepartmentCommand req, CancellationToken ct) {
+        var entity = await _db.GetByIdAsync<HRMS.Domain.Entities.Organization.Department>(req.Id, ct);
+        if (entity != null) { entity.IsDeleted = true; await _db.UpdateAsync(entity, ct); }
         return true;
     }
 }

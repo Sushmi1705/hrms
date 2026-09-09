@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -14,10 +14,21 @@ public class GetBranchByIdQueryHandler : IRequestHandler<GetBranchByIdQuery, Bra
 {
     private readonly IOrganizationRepository _db;
     public GetBranchByIdQueryHandler(IOrganizationRepository db) { _db = db; }
-    public async Task<BranchDto> Handle(GetBranchByIdQuery req, CancellationToken ct) {
-        var e = await _db.GetByIdAsync<HRMS.Domain.Entities.Organization.Branch>(req.Id, ct);
-        if (e == null) return null;
-        return new BranchDto { Id = e.Id, Code = e.Code, Name = e.Name };
+    public Task<BranchDto?> Handle(GetBranchByIdQuery req, CancellationToken ct) {
+        var res = _db.Query<HRMS.Domain.Entities.Organization.Branch>()
+            .Where(x => !x.IsDeleted && x.Id == req.Id)
+            .Select(x => new BranchDto { 
+                Id = x.Id, 
+                BusinessUnitId = x.BusinessUnitId,
+                BusinessUnitName = x.BusinessUnit != null ? x.BusinessUnit.Name : string.Empty,
+                CompanyName = x.BusinessUnit != null && x.BusinessUnit.Company != null ? x.BusinessUnit.Company.Name : string.Empty,
+                Code = x.Code, 
+                Name = x.Name,
+                LocationsCount = x.Locations.Count(l => !l.IsDeleted),
+                DepartmentsCount = x.Departments.Count(d => !d.IsDeleted)
+            })
+            .FirstOrDefault();
+        return Task.FromResult(res);
     }
 }
 
@@ -26,8 +37,21 @@ public class GetAllBranchQueryHandler : IRequestHandler<GetAllBranchQuery, List<
 {
     private readonly IOrganizationRepository _db;
     public GetAllBranchQueryHandler(IOrganizationRepository db) { _db = db; }
-    public async Task<List<BranchDto>> Handle(GetAllBranchQuery req, CancellationToken ct) {
-        var list = await _db.GetAllAsync<HRMS.Domain.Entities.Organization.Branch>(ct);
-        return list.Select(x => new BranchDto { Id = x.Id, Code = x.Code, Name = x.Name }).ToList();
+    public Task<List<BranchDto>> Handle(GetAllBranchQuery req, CancellationToken ct) {
+        var list = _db.Query<HRMS.Domain.Entities.Organization.Branch>()
+            .Where(x => !x.IsDeleted)
+            .Select(x => new BranchDto { 
+                Id = x.Id, 
+                BusinessUnitId = x.BusinessUnitId,
+                BusinessUnitName = x.BusinessUnit != null ? x.BusinessUnit.Name : string.Empty,
+                CompanyName = x.BusinessUnit != null && x.BusinessUnit.Company != null ? x.BusinessUnit.Company.Name : string.Empty,
+                Code = x.Code, 
+                Name = x.Name,
+                LocationsCount = x.Locations.Count(l => !l.IsDeleted),
+                DepartmentsCount = x.Departments.Count(d => !d.IsDeleted)
+            })
+            .OrderBy(x => x.Name)
+            .ToList();
+        return Task.FromResult(list);
     }
 }

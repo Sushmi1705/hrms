@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,4 +12,5 @@ public interface IOrganizationRepository
     Task<List<T>> GetAllAsync<T>(CancellationToken ct) where T : BaseAuditableEntity;
     Task AddAsync<T>(T entity, CancellationToken ct) where T : BaseAuditableEntity;
     Task UpdateAsync<T>(T entity, CancellationToken ct) where T : BaseAuditableEntity;
+    System.Linq.IQueryable<T> Query<T>() where T : BaseAuditableEntity;
 }

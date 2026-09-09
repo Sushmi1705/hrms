@@ -1,17 +1,19 @@
-﻿using MediatR;
-using DomainEntity = HRMS.Domain.Entities.Organization.JobGrade;
-using HRMS.Application.Interfaces.Repositories;
+using System;
+using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
-using System;
+using HRMS.Application.Interfaces.Repositories;
+using DomainEntity = HRMS.Domain.Entities.Organization.JobGrade;
 
 namespace HRMS.Application.Features.Organization.JobGrade.Commands;
 
-public record CreateJobGradeCommand(string Code, string Name) : IRequest<Guid>;
+public record CreateJobGradeCommand(string Code, string Name, int Level = 1) : IRequest<Guid>;
+public record UpdateJobGradeCommand(Guid Id, string Code, string Name, int Level = 1) : IRequest<bool>;
 public record DeleteJobGradeCommand(Guid Id) : IRequest<bool>;
 
 public class JobGradeCommandHandlers : 
     IRequestHandler<CreateJobGradeCommand, Guid>,
+    IRequestHandler<UpdateJobGradeCommand, bool>,
     IRequestHandler<DeleteJobGradeCommand, bool>
 {
     private readonly IOrganizationRepository _repo;
@@ -22,18 +24,29 @@ public class JobGradeCommandHandlers :
         var entity = new DomainEntity { 
             Id = Guid.NewGuid(),
             Code = request.Code, 
-            Name = request.Name, 
+            Name = request.Name,
+            Level = request.Level,
             CreatedAt = DateTime.UtcNow
         };
         await _repo.AddAsync(entity, ct);
         return entity.Id;
     }
 
+    public async Task<bool> Handle(UpdateJobGradeCommand request, CancellationToken ct)
+    {
+        var entity = await _repo.GetByIdAsync<DomainEntity>(request.Id, ct);
+        if (entity == null) return false;
+        entity.Code = request.Code;
+        entity.Name = request.Name;
+        entity.Level = request.Level;
+        await _repo.UpdateAsync(entity, ct);
+        return true;
+    }
+
     public async Task<bool> Handle(DeleteJobGradeCommand request, CancellationToken ct)
     {
         var entity = await _repo.GetByIdAsync<DomainEntity>(request.Id, ct);
         if (entity == null) return false;
-        // Soft delete assuming BaseAuditableEntity has IsDeleted. Otherwise just ignore deletion logic for now
         entity.DeletedAt = DateTime.UtcNow;
         entity.IsDeleted = true;
         await _repo.UpdateAsync(entity, ct);

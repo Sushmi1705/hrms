@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../../../components/ui/card';
 import { Button } from '../../../components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../components/ui/tabs';
@@ -20,11 +20,11 @@ import {
 
 export function HRPerformanceDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
-  const [showToast, setShowToast] = useState(false);
+  const [triggerCreateCycle, setTriggerCreateCycle] = useState(false);
   
   const handleLaunch = () => {
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
+    setActiveTab('cycles');
+    setTriggerCreateCycle(true);
   };
   const [analytics, setAnalytics] = useState<any>({
     activePips: 14,
@@ -66,15 +66,6 @@ export function HRPerformanceDashboard() {
           </div>
         </div>
 
-        {showToast && (
-          <div className="fixed bottom-4 right-4 bg-emerald-600 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 animate-in slide-in-from-bottom-5 z-50">
-            <CheckCircle className="w-5 h-5" />
-            <div>
-              <p className="font-medium">Action Completed</p>
-              <p className="text-emerald-100 text-sm">New performance cycle launched organization-wide.</p>
-            </div>
-          </div>
-        )}
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="bg-white border border-slate-200 p-1 rounded-lg h-auto flex flex-wrap gap-1 shadow-sm">
@@ -158,7 +149,12 @@ export function HRPerformanceDashboard() {
             </div>
           </TabsContent>
 
-          <TabsContent value="cycles"><PerformanceReviewCycles /></TabsContent>
+          <TabsContent value="cycles">
+            <PerformanceReviewCycles 
+              triggerCreateModal={triggerCreateCycle} 
+              onModalOpened={() => setTriggerCreateCycle(false)} 
+            />
+          </TabsContent>
           <TabsContent value="goals"><PerformanceGoals /></TabsContent>
           <TabsContent value="reviews"><PerformanceReviewsList /></TabsContent>
           <TabsContent value="feedback"><PerformanceFeedback360 /></TabsContent>

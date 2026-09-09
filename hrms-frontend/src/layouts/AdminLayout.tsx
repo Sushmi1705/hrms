@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Target, Banknote, CalendarRange, LayoutDashboard, Building2, Briefcase, MapPin, Map, Bell, Search, Menu, User, ChevronRight, Users, GraduationCap, DollarSign, Network, Clock, Settings, FileText, BarChart, Shield, Package, Layers, UserCheck, ClipboardCheck, FileSpreadsheet, TrendingUp, Award, ShieldCheck, CheckCircle, Plane, Receipt, CreditCard, LogOut } from 'lucide-react';
+import { Target, Banknote, CalendarRange, LayoutDashboard, Building2, Briefcase, MapPin, Map, Bell, Search, Menu, User, ChevronRight, Users, GraduationCap, DollarSign, Network, Clock, Settings, FileText, BarChart, Shield, Package, Layers, UserCheck, ClipboardCheck, FileSpreadsheet, TrendingUp, Award, ShieldCheck, CheckCircle, Plane, Receipt, CreditCard, LogOut, Globe } from 'lucide-react';
 import { NotificationBell } from '../components/NotificationBell';
 import { Button } from '../components/ui/button';
 
@@ -102,6 +102,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
           <div>
             {!collapsed && <div className="px-3 mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">Organization Core</div>}
             <div className="space-y-1">
+              <SidebarItem icon={Globe} label="Org Command Center" to="/admin/organization" collapsed={collapsed} />
               <SidebarItem icon={Building2} label="Companies" to="/admin/companies" collapsed={collapsed} />
               <SidebarItem icon={Briefcase} label="Business Units" to="/admin/business-units" collapsed={collapsed} />
               <SidebarItem icon={MapPin} label="Branches" to="/admin/branches" collapsed={collapsed} />

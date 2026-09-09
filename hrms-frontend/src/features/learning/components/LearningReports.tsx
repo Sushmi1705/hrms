@@ -1,67 +1,581 @@
-﻿import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card';
 import { Button } from '../../../components/ui/button';
-import { Search, Filter, MoreHorizontal, CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import { Input } from '../../../components/ui/input';
+import { 
+  Search, Filter, MoreHorizontal, CheckCircle2, Clock, 
+  AlertCircle, Download, FileText, FileSpreadsheet, 
+  BarChart3, RefreshCw, Calendar, Eye, X, Check, Play
+} from 'lucide-react';
+
+export type ReportFormat = 'PDF' | 'Excel' | 'CSV';
+export type ReportStatus = 'Completed' | 'Scheduled' | 'Processing';
+
+export interface ReportRecord {
+  id: number;
+  code: string;
+  name: string;
+  by: string;
+  date: string;
+  fmt: ReportFormat;
+  status: ReportStatus;
+  recordsCount: number;
+  frequency: 'Ad-hoc' | 'Monthly' | 'Quarterly' | 'Annual';
+  description: string;
+}
+
+const INITIAL_REPORTS: ReportRecord[] = [
+  {
+    id: 1,
+    code: 'RPT-COMP-Q3',
+    name: 'Q3 Enterprise Compliance & Regulatory Audit Report',
+    by: 'System Automation',
+    date: '2026-10-01',
+    fmt: 'PDF',
+    status: 'Completed',
+    recordsCount: 1024,
+    frequency: 'Quarterly',
+    description: 'Statutory compliance verification across all business units for SOC2, HIPAA, and Anti-Harassment modules.'
+  },
+  {
+    id: 2,
+    code: 'RPT-SKILL-2026',
+    name: 'Annual Workforce Skill Gap & Capability Analysis',
+    by: 'HR Admin (Sarah)',
+    date: '2026-12-01',
+    fmt: 'Excel',
+    status: 'Scheduled',
+    recordsCount: 450,
+    frequency: 'Annual',
+    description: 'Cross-functional competency breakdown identifying high-demand engineering, AI, and management skill deficits.'
+  },
+  {
+    id: 3,
+    code: 'RPT-COURSE-ENG',
+    name: 'Engineering Course Completion & Test Scoring Analytics',
+    by: 'David Miller (VP Eng)',
+    date: '2026-09-01',
+    fmt: 'CSV',
+    status: 'Completed',
+    recordsCount: 185,
+    frequency: 'Monthly',
+    description: 'Detailed individual scores and time-to-completion metrics for React 19, Go, and Kubernetes tracks.'
+  },
+  {
+    id: 4,
+    code: 'RPT-BUDGET-Q4',
+    name: 'LMS External Training & Certification ROI Ledger',
+    by: 'Finance & L&D Board',
+    date: '2026-09-07',
+    fmt: 'Excel',
+    status: 'Processing',
+    recordsCount: 78,
+    frequency: 'Ad-hoc',
+    description: 'Vendor expenditure audit covering AWS exam vouchers, external instructor workshops, and Coursera licenses.'
+  },
+  {
+    id: 5,
+    code: 'RPT-FEEDBACK-Q2',
+    name: 'Trainer Effectiveness & Workshop NPS Evaluation',
+    by: 'HR Operations',
+    date: '2026-08-15',
+    fmt: 'PDF',
+    status: 'Completed',
+    recordsCount: 310,
+    frequency: 'Quarterly',
+    description: 'Aggregated employee feedback sentiment and instructor satisfaction ratings for classroom sessions.'
+  }
+];
 
 export function LearningReports() {
-  const data = [{name:'Q3 Compliance Report', by:'System', date:'2026-10-01', fmt:'PDF', status:'Completed'},{name:'Annual Skill Gap Analysis', by:'HR Admin', date:'2026-12-01', fmt:'Excel', status:'Scheduled'}];
+  const [reports, setReports] = useState<ReportRecord[]>(INITIAL_REPORTS);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'All' | ReportStatus>('All');
+  const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
+  const [selectedReport, setSelectedReport] = useState<ReportRecord | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 4000);
+  };
+
+  const filteredReports = useMemo(() => {
+    return reports.filter(item => {
+      const matchesSearch = 
+        item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.by.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.fmt.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      const matchesStatus = statusFilter === 'All' || item.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
+  }, [reports, searchTerm, statusFilter]);
+
+  const handleRegenerate = (id: number) => {
+    setReports(prev => prev.map(r => {
+      if (r.id !== id) return r;
+      const today = new Date().toISOString().split('T')[0];
+      return { ...r, status: 'Completed', date: today };
+    }));
+    if (selectedReport && selectedReport.id === id) {
+      setSelectedReport(prev => prev ? {
+        ...prev,
+        status: 'Completed',
+        date: new Date().toISOString().split('T')[0]
+      } : null);
+    }
+    setActiveDropdown(null);
+    showToast('Report successfully regenerated with real-time data!');
+  };
+
+  const handleDownloadReport = (rec: ReportRecord) => {
+    const ext = rec.fmt === 'Excel' ? 'xlsx' : rec.fmt === 'CSV' ? 'csv' : 'pdf.txt';
+    const content = `===============================================================
+              ENTERPRISE L&D INTELLIGENCE REPORT
+===============================================================
+Report Code   : ${rec.code}
+Report Title  : ${rec.name}
+Generated By  : ${rec.by}
+Generated Date: ${rec.date}
+Format        : ${rec.fmt}
+Status        : ${rec.status.toUpperCase()}
+Audited Scope : ${rec.recordsCount} Employee Records
+Frequency     : ${rec.frequency}
+
+Executive Summary:
+${rec.description}
+
+Key Performance Metrics:
+- Overall Compliance Rate   : 98.4%
+- Average Assessment Score  : 87.2%
+- Mandatory Course Completion: 92% across all departments
+- Total Learning Hours Logged: 4,820 hrs YTD
+
+Audit Stamp:
+Generated by HRMS LMS Automated Reporting Service
+Certified Compliance ID: LMS-REP-VERIFIED-${rec.id}-2026
+Generated at: ${new Date().toISOString()}
+===============================================================`;
+
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${rec.code}-${rec.name.replace(/\s+/g, '_')}.${ext}`;
+    link.click();
+    URL.revokeObjectURL(url);
+    showToast(`Downloaded ${rec.name} (${rec.fmt})!`);
+    setActiveDropdown(null);
+  };
+
+  const getFormatBadge = (fmt: ReportFormat) => {
+    switch (fmt) {
+      case 'PDF':
+        return 'bg-rose-100 text-rose-800 border-rose-200';
+      case 'Excel':
+        return 'bg-emerald-100 text-emerald-800 border-emerald-200';
+      case 'CSV':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+    }
+  };
 
   return (
-    <Card className="shadow-sm border-slate-200">
-      <CardHeader className="flex flex-row items-center justify-between border-b border-slate-100 pb-4">
-        <div>
-          <CardTitle className="text-lg font-semibold text-slate-800">Learning & Development Reports</CardTitle>
-          <p className="text-sm text-slate-500 mt-1">Generate comprehensive L&D analytics</p>
+    <div className="space-y-6">
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-5 py-3 rounded-lg shadow-xl flex items-center gap-3 border border-slate-700 animate-in fade-in slide-in-from-bottom-3 duration-200">
+          <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+          <span className="text-sm font-medium">{toastMessage}</span>
+          <button 
+            onClick={() => setToastMessage(null)}
+            className="ml-2 text-slate-400 hover:text-white"
+          >
+            ✕
+          </button>
         </div>
-        <div className="flex gap-2">
-          <div className="relative">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input type="text" placeholder="Search..." className="pl-9 pr-4 py-2 border border-slate-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-64" />
+      )}
+
+      {/* KPI Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="border-slate-200 shadow-sm bg-gradient-to-br from-indigo-50/50 to-white">
+          <CardContent className="p-4 flex items-center justify-between">
+            <div>
+              <p className="text-xs font-medium text-indigo-600 uppercase tracking-wider">Total Reports</p>
+              <h3 className="text-2xl font-bold text-slate-800 mt-1">{reports.length}</h3>
+              <p className="text-xs text-slate-500 mt-1">Configured templates</p>
+            </div>
+            <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
+              <BarChart3 className="w-5 h-5" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-slate-200 shadow-sm bg-gradient-to-br from-emerald-50/50 to-white">
+          <CardContent className="p-4 flex items-center justify-between">
+            <div>
+              <p className="text-xs font-medium text-emerald-600 uppercase tracking-wider">Completed</p>
+              <h3 className="text-2xl font-bold text-slate-800 mt-1">
+                {reports.filter(r => r.status === 'Completed').length}
+              </h3>
+              <p className="text-xs text-slate-500 mt-1">Ready for download</p>
+            </div>
+            <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+              <CheckCircle2 className="w-5 h-5" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-slate-200 shadow-sm bg-gradient-to-br from-blue-50/50 to-white">
+          <CardContent className="p-4 flex items-center justify-between">
+            <div>
+              <p className="text-xs font-medium text-blue-600 uppercase tracking-wider">Scheduled Runs</p>
+              <h3 className="text-2xl font-bold text-slate-800 mt-1">
+                {reports.filter(r => r.status === 'Scheduled').length}
+              </h3>
+              <p className="text-xs text-slate-500 mt-1">Automated dispatch</p>
+            </div>
+            <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+              <Calendar className="w-5 h-5" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-slate-200 shadow-sm bg-gradient-to-br from-amber-50/50 to-white">
+          <CardContent className="p-4 flex items-center justify-between">
+            <div>
+              <p className="text-xs font-medium text-amber-600 uppercase tracking-wider">Processing</p>
+              <h3 className="text-2xl font-bold text-slate-800 mt-1">
+                {reports.filter(r => r.status === 'Processing').length}
+              </h3>
+              <p className="text-xs text-slate-500 mt-1">Aggregating telemetry</p>
+            </div>
+            <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-600">
+              <Clock className="w-5 h-5" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Main Table Card */}
+      <Card className="shadow-sm border-slate-200">
+        <CardHeader className="flex flex-col md:flex-row md:items-center justify-between border-b border-slate-100 pb-4 gap-4">
+          <div>
+            <CardTitle className="text-lg font-semibold text-slate-800 flex items-center gap-2">
+              <BarChart3 className="w-5 h-5 text-indigo-600" />
+              Learning & Development Reports
+            </CardTitle>
+            <p className="text-sm text-slate-500 mt-1">Generate comprehensive L&D analytics, compliance audits, and skills intelligence</p>
           </div>
-          <Button variant="outline" className="flex items-center gap-2"><Filter className="w-4 h-4"/> Filter</Button>
-        </div>
-      </CardHeader>
-      <CardContent className="p-0">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
-            <thead className="bg-slate-50 text-slate-600 font-medium border-b border-slate-200">
-              <tr>
-<th className='px-6 py-3'>Report Name</th><th className='px-6 py-3'>Generated By</th><th className='px-6 py-3'>Date</th><th className='px-6 py-3'>Format</th><th className='px-6 py-3'>Status</th>
-                <th className="px-6 py-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {data.map((item, i) => (
-                <tr key={i} className="hover:bg-slate-50 transition-colors">
-                  {Object.values(item).map((val, j) => (
-                    <td key={j} className="px-6 py-4 whitespace-nowrap">
-                      {val === 'Published' || val === 'Completed' || val === 'Expert' || val === 'Active' || val === 'Certified' ? (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"><CheckCircle className="w-3 h-3 mr-1"/> {val}</span>
-                      ) : val === 'Draft' || val === 'In Progress' || val === 'Beginner' || val === 'Scheduled' ? (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800"><Clock className="w-3 h-3 mr-1"/> {val}</span>
-                      ) : val === 'Archived' || val === 'Expired' || val === 'Overdue' || val === 'Failed' ? (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800"><AlertCircle className="w-3 h-3 mr-1"/> {val}</span>
-                      ) : (
-                        <span className="text-slate-700">{val}</span>
-                      )}
-                    </td>
-                  ))}
-                  <td className="px-6 py-4 whitespace-nowrap text-right">
-                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0"><MoreHorizontal className="w-4 h-4 text-slate-500"/></Button>
-                  </td>
-                </tr>
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="relative">
+              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <Input 
+                type="text" 
+                placeholder="Search report, author, format..." 
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-9 pr-4 py-2 border-slate-200 rounded-md text-sm focus:ring-2 focus:ring-indigo-500 w-64 h-9" 
+              />
+            </div>
+            
+            {/* Status Filter Buttons */}
+            <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-lg">
+              {(['All', 'Completed', 'Scheduled', 'Processing'] as const).map(status => (
+                <button
+                  key={status}
+                  onClick={() => setStatusFilter(status)}
+                  className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
+                    statusFilter === status 
+                      ? 'bg-white text-indigo-600 shadow-sm' 
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  {status}
+                </button>
               ))}
-            </tbody>
-          </table>
-        </div>
-        <div className="p-4 border-t border-slate-100 flex items-center justify-between text-sm text-slate-500">
-          <div>Showing 1 to {data.length} of {data.length} entries</div>
-          <div className="flex gap-1">
-            <Button variant="outline" size="sm" disabled>Previous</Button>
-            <Button variant="outline" size="sm">Next</Button>
+            </div>
+
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => {
+                const csvHeader = 'Report Code,Report Name,Generated By,Date,Format,Status,Scope\n';
+                const csvRows = reports.map(r => `"${r.code}","${r.name}","${r.by}","${r.date}","${r.fmt}","${r.status}","${r.recordsCount} Staff"`).join('\n');
+                const blob = new Blob([csvHeader + csvRows], { type: 'text/csv' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `HRMS-Reports-Index-${new Date().toISOString().split('T')[0]}.csv`;
+                a.click();
+                URL.revokeObjectURL(url);
+                showToast('Exported report index to CSV!');
+              }}
+              className="flex items-center gap-2 text-slate-700 h-9"
+            >
+              <Download className="w-4 h-4" /> Export Index
+            </Button>
+          </div>
+        </CardHeader>
+
+        <CardContent className="p-0">
+          <div className="overflow-x-auto min-h-[260px]">
+            <table className="w-full text-sm text-left">
+              <thead className="bg-slate-50 text-slate-600 font-medium border-b border-slate-200">
+                <tr>
+                  <th className="px-6 py-3">Report Name</th>
+                  <th className="px-6 py-3">Generated By</th>
+                  <th className="px-6 py-3">Date</th>
+                  <th className="px-6 py-3">Format</th>
+                  <th className="px-6 py-3">Status</th>
+                  <th className="px-6 py-3 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {filteredReports.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-12 text-center text-slate-500">
+                      <div className="flex flex-col items-center justify-center">
+                        <BarChart3 className="w-10 h-10 text-slate-300 mb-2" />
+                        <p className="text-sm font-medium">No reports match your search query</p>
+                        <Button 
+                          variant="link" 
+                          size="sm" 
+                          onClick={() => { setSearchTerm(''); setStatusFilter('All'); }}
+                          className="text-indigo-600 mt-1"
+                        >
+                          Clear filters
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  filteredReports.map((item) => (
+                    <tr key={item.id} className="hover:bg-slate-50 transition-colors group">
+                      <td className="px-6 py-4">
+                        <div className="max-w-md">
+                          <p className="font-medium text-slate-900 leading-tight">{item.name}</p>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-xs font-mono text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded">{item.code}</span>
+                            <span className="text-xs text-slate-500">{item.recordsCount} records</span>
+                            <span className="text-xs text-slate-400">• {item.frequency}</span>
+                          </div>
+                        </div>
+                      </td>
+
+                      <td className="px-6 py-4 whitespace-nowrap text-slate-700">
+                        <span className="font-medium">{item.by}</span>
+                      </td>
+
+                      <td className="px-6 py-4 whitespace-nowrap text-slate-600">
+                        <div className="flex items-center gap-1.5 text-xs">
+                          <Calendar className="w-3.5 h-3.5 text-slate-400" />
+                          {item.date}
+                        </div>
+                      </td>
+
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold border ${getFormatBadge(item.fmt)}`}>
+                          {item.fmt === 'Excel' ? (
+                            <FileSpreadsheet className="w-3 h-3 mr-1" />
+                          ) : (
+                            <FileText className="w-3 h-3 mr-1" />
+                          )}
+                          {item.fmt}
+                        </span>
+                      </td>
+
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {item.status === 'Completed' ? (
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                            <CheckCircle2 className="w-3 h-3 mr-1"/> Completed
+                          </span>
+                        ) : item.status === 'Scheduled' ? (
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            <Clock className="w-3 h-3 mr-1"/> Scheduled
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                            <RefreshCw className="w-3 h-3 mr-1 animate-spin"/> Processing
+                          </span>
+                        )}
+                      </td>
+
+                      <td className="px-6 py-4 whitespace-nowrap text-right">
+                        <div className="flex items-center justify-end gap-2 relative">
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => setSelectedReport(item)}
+                            className="text-indigo-600 border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700 h-8 text-xs font-medium flex items-center gap-1.5"
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                            View
+                          </Button>
+
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            onClick={() => setActiveDropdown(activeDropdown === item.id ? null : item.id)}
+                            className="h-8 w-8 p-0 text-slate-500 hover:text-slate-800"
+                          >
+                            <MoreHorizontal className="w-4 h-4" />
+                          </Button>
+
+                          {/* Dropdown Menu */}
+                          {activeDropdown === item.id && (
+                            <div 
+                              className="absolute right-0 top-9 w-48 bg-white rounded-lg shadow-xl border border-slate-200 py-1 z-30 text-left animate-in fade-in zoom-in-95 duration-150"
+                              onMouseLeave={() => setActiveDropdown(null)}
+                            >
+                              <button
+                                onClick={() => {
+                                  setSelectedReport(item);
+                                  setActiveDropdown(null);
+                                }}
+                                className="w-full px-4 py-2 text-xs text-slate-700 hover:bg-slate-100 flex items-center gap-2"
+                              >
+                                <Eye className="w-3.5 h-3.5 text-slate-500" />
+                                Inspect Report Details
+                              </button>
+
+                              <button
+                                onClick={() => handleDownloadReport(item)}
+                                className="w-full px-4 py-2 text-xs text-slate-700 hover:bg-slate-100 flex items-center gap-2"
+                              >
+                                <Download className="w-3.5 h-3.5 text-slate-500" />
+                                Download File ({item.fmt})
+                              </button>
+
+                              <div className="border-t border-slate-100 my-1"></div>
+
+                              <button
+                                onClick={() => handleRegenerate(item.id)}
+                                className="w-full px-4 py-2 text-xs text-emerald-600 hover:bg-emerald-50 flex items-center gap-2 font-medium"
+                              >
+                                <RefreshCw className="w-3.5 h-3.5 text-emerald-500" />
+                                Regenerate Report Now
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="p-4 border-t border-slate-100 flex items-center justify-between text-sm text-slate-500">
+            <div>Showing {filteredReports.length} of {reports.length} entries</div>
+            <div className="flex gap-1">
+              <Button variant="outline" size="sm" disabled>Previous</Button>
+              <Button variant="outline" size="sm" disabled={filteredReports.length <= 5}>Next</Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Interactive Report View Modal */}
+      {selectedReport && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-slate-900 to-indigo-950 text-white">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-indigo-500/20 border border-indigo-400/30 flex items-center justify-center text-indigo-300">
+                  <BarChart3 className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white">Report Manifest</h3>
+                  <p className="text-xs text-indigo-200">{selectedReport.code} • {selectedReport.fmt} Format</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setSelectedReport(null)}
+                className="text-slate-400 hover:text-white p-1 rounded-md"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4 text-sm text-slate-600">
+              <div className="bg-slate-50 p-4 rounded-lg border border-slate-200/80">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">TITLE & PURPOSE</span>
+                  <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold ${
+                    selectedReport.status === 'Completed'
+                      ? 'bg-emerald-100 text-emerald-800'
+                      : selectedReport.status === 'Scheduled'
+                      ? 'bg-blue-100 text-blue-800'
+                      : 'bg-amber-100 text-amber-800'
+                  }`}>
+                    {selectedReport.status}
+                  </span>
+                </div>
+                <h4 className="text-base font-bold text-slate-900">{selectedReport.name}</h4>
+                <p className="text-xs text-slate-600 mt-2 leading-relaxed">{selectedReport.description}</p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 text-xs">
+                <div className="p-3 bg-white border border-slate-200 rounded-lg">
+                  <span className="text-slate-400 block font-medium">Author / Origin</span>
+                  <span className="text-slate-800 font-semibold text-sm">{selectedReport.by}</span>
+                  <span className="text-slate-500 block">Frequency: {selectedReport.frequency}</span>
+                </div>
+                <div className="p-3 bg-white border border-slate-200 rounded-lg">
+                  <span className="text-slate-400 block font-medium">Data Scope</span>
+                  <span className="text-indigo-700 font-semibold text-sm">{selectedReport.recordsCount} Records</span>
+                  <span className="text-slate-500 block">Export Format: {selectedReport.fmt}</span>
+                </div>
+                <div className="p-3 bg-white border border-slate-200 rounded-lg">
+                  <span className="text-slate-400 block font-medium">Run Date</span>
+                  <span className="text-slate-800 font-semibold">{selectedReport.date}</span>
+                </div>
+                <div className="p-3 bg-white border border-slate-200 rounded-lg">
+                  <span className="text-slate-400 block font-medium">Checksum Verification</span>
+                  <span className="text-emerald-700 font-mono font-semibold text-xs">SHA256: VALID</span>
+                </div>
+              </div>
+
+              <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg text-xs">
+                <span className="text-slate-500 font-medium block mb-1">Telemetry & Audit Status:</span>
+                <p className="text-slate-700">All data pipelines reconciled against HR Core Employee Directory and LMS Assessment telemetry database.</p>
+              </div>
+            </div>
+
+            <div className="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleDownloadReport(selectedReport)}
+                className="flex items-center gap-2 text-slate-700"
+              >
+                <Download className="w-4 h-4" /> Download ({selectedReport.fmt})
+              </Button>
+
+              <div className="flex gap-2">
+                <Button
+                  variant="default"
+                  size="sm"
+                  onClick={() => handleRegenerate(selectedReport.id)}
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white flex items-center gap-1.5"
+                >
+                  <RefreshCw className="w-3.5 h-3.5" /> Re-run Report Now
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => setSelectedReport(null)}
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      )}
+    </div>
   );
 }
